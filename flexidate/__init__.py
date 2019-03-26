@@ -227,7 +227,7 @@ class DateutilDateParser(DateParserBase):
             return None
         date = orig_date = date.strip()
 
-        # Need to andle bad date like -473AD?
+        # Need to handle bad date like -473AD?
         if date.startswith('-'):
             pre_zero = True
         else:
