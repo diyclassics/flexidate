@@ -173,10 +173,10 @@ class TestDateParsers(object):
         in1 = '1768 A.D.'
         fd = parser.parse(in1)
         assert str(fd) == '1768', fd
-        #
-        # in1 = '1768 CE'
-        # fd = parser.parse(in1)
-        # assert str(fd) == '1768', fd
+
+        in1 = '1768 CE'
+        fd = parser.parse(in1)
+        assert str(fd) == '1768', fd
 
         in1 = '1768 C.E.'
         fd = parser.parse(in1)
@@ -195,6 +195,14 @@ class TestDateParsers(object):
         assert str(fd) == '-0004', fd
 
         in1 = '4 B.C.'
+        fd = parser.parse(in1)
+        assert str(fd) == '-0004', fd
+
+        in1 = '4BC'
+        fd = parser.parse(in1)
+        assert str(fd) == '-0004', fd
+
+        in1 = '4 b.c.'
         fd = parser.parse(in1)
         assert str(fd) == '-0004', fd
 
