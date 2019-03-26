@@ -227,22 +227,43 @@ class DateutilDateParser(DateParserBase):
             return None
         date = orig_date = date.strip()
 
-        # various normalizations
-        # TODO: call .lower() first
-        date = date.replace('B.C.E.', 'BC')
-        date = date.replace('BCE', 'BC')
-        date = date.replace('B.C.', 'BC')
-        date = date.replace('A.D.', 'AD')
-        date = date.replace('C.E.', 'AD')
-        date = date.replace('CE', 'AD')
-
-        # deal with pre 0AD dates
-        if date.startswith('-') or 'BC' in date or 'B.C.' in date:
+        # Handle bad date like -473AD
+        if date.startswith('-'):
             pre0AD = True
         else:
             pre0AD = False
-        # BC seems to mess up parser
-        date = date.replace('BC', '')
+
+        negative_patterns = [r'B\.*\s*C\.*E*\.*']
+        positive_patterns = [r'A\.*D*\.*', r'C\.*E*\.*']
+
+        for pattern in negative_patterns:
+            pattern = re.compile(pattern, flags=re.IGNORECASE)
+            if pattern.search(date):
+                pre0AD = True
+                pattern.sub('', date)
+
+        for pattern in positive_patterns:
+            pattern = re.compile(pattern, flags=re.IGNORECASE)
+            if pattern.search(date):
+                pre0AD = False
+                pattern.sub('', date)
+
+        # # various normalizations
+        # # TODO: call .lower() first
+        # date = date.replace('B.C.E.', 'BC')
+        # date = date.replace('BCE', 'BC')
+        # date = date.replace('B.C.', 'BC')
+        # date = date.replace('A.D.', 'AD')
+        # date = date.replace('C.E.', 'AD')
+        # date = date.replace('CE', 'AD')
+
+        # # deal with pre 0AD dates
+        # if date.startswith('-') or 'BC' in date or 'B.C.' in date:
+        #     pre0AD = True
+        # else:
+        #     pre0AD = False
+        # # BC seems to mess up parser
+        # date = date.replace('BC', '')
 
         # deal with circa: 'c.1950' or 'c1950'
         circa_match = re.match('([^a-zA-Z]*)c\.?\s*(\d+.*)', date)
